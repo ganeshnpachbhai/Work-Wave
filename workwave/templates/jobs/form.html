@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title|default:"Job Posting" }} — WorkWave{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content Area -->
+    <div class="dashboard-main">
+        {% include "components/dashboard_header.html" %}
+
+        <div class="dashboard-body">
+            {% include "components/messages.html" %}
+
+            <div class="row justify-content-center">
+                <div class="col-xl-9 col-lg-10">
+                    <!-- Heading -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="badge text-bg-primary-subtle text-primary border border-primary-subtle fw-semibold rounded-pill px-2.5 py-1">Recruitment Workspace</span>
+                            </div>
+                            <h1 class="h3 fw-bold mb-1">{{ page_title|default:"Post a Job" }}</h1>
+                            <p class="text-secondary small mb-0">Provide clear specifications to attract qualified candidates.</p>
+                        </div>
+                        <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Main Form Card -->
+                    <form method="post" class="ww-card p-4 p-md-5 mb-4">
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2.5 small mb-4">
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Section 1: Core Details -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-briefcase fs-5 text-primary"></i>
+                                <h2 class="h5 fw-bold mb-0">Role Information</h2>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_title" class="form-label">
+                                    Job Title <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}" class="form-control" placeholder="e.g. Staff Distributed Systems Engineer" required>
+                                <div class="form-text">Use standard industry titles for better search discoverability.</div>
+                                {% for error in form.title.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-0">
+                                <label for="id_description" class="form-label">
+                                    Role Description & Responsibilities <span class="text-danger">*</span>
+                                </label>
+                                <textarea name="description" id="id_description" rows="6" class="form-control" placeholder="Outline primary responsibilities, technical stack, required qualifications, and company benefits..." required>{{ form.description.value|default:'' }}</textarea>
+                                <div class="form-text">Clear requirements improve candidate qualification and match rates.</div>
+                                {% for error in form.description.errors %}
+                                    <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Location & Work Arrangement -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-geo-alt fs-5 text-danger"></i>
+                                <h2 class="h5 fw-bold mb-0">Location & Work Arrangement</h2>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="id_location" class="form-label">
+                                        Location / Office <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" name="location" id="id_location" value="{{ form.location.value|default:'' }}" class="form-control" placeholder="e.g. Remote, San Francisco, CA or Hybrid" required>
+                                    {% for error in form.location.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="id_job_type" class="form-label">
+                                        Job type <span class="text-danger">*</span>
+                                    </label>
+                                    <select name="job_type" id="id_job_type" class="form-select" required>
+                                        <option value="full_time" {% if form.job_type.value == "full_time" %}selected{% endif %}>Full Time</option>
+                                        <option value="part_time" {% if form.job_type.value == "part_time" %}selected{% endif %}>Part Time</option>
+                                        <option value="contract" {% if form.job_type.value == "contract" %}selected{% endif %}>Contract</option>
+                                        <option value="remote" {% if form.job_type.value == "remote" %}selected{% endif %}>Remote</option>
+                                        <option value="internship" {% if form.job_type.value == "internship" %}selected{% endif %}>Internship</option>
+                                    </select>
+                                    {% for error in form.job_type.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Compensation & Timeline -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-cash-stack fs-5 text-success"></i>
+                                <h2 class="h5 fw-bold mb-0">Compensation & Application Deadline</h2>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="id_salary_min" class="form-label">Minimum Salary (INR ₹ / Year)</label>
+                                    <input type="number" step="0.01" name="salary_min" id="id_salary_min" value="{{ form.salary_min.value|default:'' }}" class="form-control" placeholder="e.g. 1200000">
+                                    {% for error in form.salary_min.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="id_salary_max" class="form-label">Maximum Salary (INR ₹ / Year)</label>
+                                    <input type="number" step="0.01" name="salary_max" id="id_salary_max" value="{{ form.salary_max.value|default:'' }}" class="form-control" placeholder="e.g. 1800000">
+                                    {% for error in form.salary_max.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="id_deadline" class="form-label">Application Deadline</label>
+                                    <input type="date" name="deadline" id="id_deadline" value="{{ form.deadline.value|default:'' }}" class="form-control">
+                                    <div class="form-text">Optional. Candidates will see this deadline on the listing.</div>
+                                    {% for error in form.deadline.errors %}
+                                        <div class="text-danger small mt-1">{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit / Cancel -->
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+                            <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-lg me-1"></i> Save & Publish Job
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}
