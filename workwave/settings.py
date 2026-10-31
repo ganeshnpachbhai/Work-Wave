@@ -16,22 +16,35 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-DEFAULT_DEV_SECRET_KEY = 'django-insecure-!z3sc=e#-)yf0#)p_9*_0@=^6j90@j_p#-xfdt6nshl_3#wyo^'
+DEFAULT_DEV_SECRET_KEY = '1cc202c5b63513d4f9d6040d7992c9a3'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', DEFAULT_DEV_SECRET_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-allowed_hosts_env = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]')
-ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
+allowed_hosts_env = os.environ.get(
+    'DJANGO_ALLOWED_HOSTS',
+    'localhost,127.0.0.1,[::1]'
+)
 
-if not DEBUG and SECRET_KEY == DEFAULT_DEV_SECRET_KEY:
-    warnings.warn(
-        "DJANGO_SECRET_KEY environment variable is not configured for production deployment!",
-        RuntimeWarning,
-    )
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in allowed_hosts_env.split(',')
+    if host.strip()
+]
 
+RENDER_EXTERNAL_HOSTNAME = os.environ.get(
+    'RENDER_EXTERNAL_HOSTNAME'
+)
 
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{host}"
+    for host in ALLOWED_HOSTS
+    if host not in ['localhost', '127.0.0.1', '[::1]']
+]
 # Application definition
 
 INSTALLED_APPS = [
