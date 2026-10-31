@@ -1,0 +1,189 @@
+/* ==========================================================================
+   WorkWave — Authentication Stylesheet (Login & Signup)
+   ========================================================================== */
+
+.auth-page {
+    min-height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+}
+
+.auth-split-left {
+    flex: 1 1 50%;
+    background: linear-gradient(135deg, #0B1120 0%, #172554 45%, #1E3A8A 100%);
+    color: #ffffff;
+    padding: 4rem 4.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-split-left::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.22) 0%, rgba(249, 115, 22, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-split-left::after {
+    content: '';
+    position: absolute;
+    bottom: -15%;
+    left: -15%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-split-right {
+    flex: 1 1 50%;
+    padding: 3rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.auth-form-container {
+    width: 100%;
+    max-width: 460px;
+}
+
+.auth-feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 2.5rem 0;
+}
+
+.auth-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.auth-feature-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    color: var(--ww-accent);
+    flex-shrink: 0;
+}
+
+.auth-feature-text h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+}
+
+.auth-feature-text p {
+    font-size: 0.85rem;
+    color: #CBD5E1;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+/* Role Selector Cards */
+.role-selector-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.role-card {
+    border: 1.5px solid var(--ww-border);
+    border-radius: 12px;
+    padding: 1rem 0.85rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.18s ease-in-out;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.role-card:hover {
+    border-color: #CBD5E1;
+    background-color: #F8FAFC;
+}
+
+.role-card.selected {
+    border-color: var(--ww-accent);
+    background-color: #FFF7ED;
+    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
+}
+
+.role-card i {
+    font-size: 1.5rem;
+    color: var(--ww-text-muted);
+    transition: color 0.15s ease;
+}
+
+.role-card.selected i {
+    color: var(--ww-accent);
+}
+
+.role-card-label {
+    font-family: var(--ww-font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--ww-text);
+}
+
+.role-card.selected .role-card-label {
+    color: var(--ww-accent);
+}
+
+/* Password Toggle */
+.input-password-wrap {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--ww-text-muted);
+    font-size: 1.1rem;
+    padding: 0;
+    cursor: pointer;
+    z-index: 5;
+}
+
+.password-toggle-btn:hover {
+    color: var(--ww-text);
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .auth-split-left {
+        display: none;
+    }
+
+    .auth-split-right {
+        padding: 3rem 1.5rem;
+    }
+}

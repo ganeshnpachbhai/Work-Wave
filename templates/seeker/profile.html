@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manage Profile — WorkWave{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content Area -->
+    <div class="dashboard-main">
+        {% include "components/dashboard_header.html" %}
+
+        <div class="dashboard-body">
+            {% include "components/messages.html" %}
+
+            <div class="row justify-content-center">
+                <div class="col-xl-9 col-lg-10">
+                    <!-- Page Heading -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                        <div>
+                            <h1 class="h3 fw-bold mb-1">Professional Profile</h1>
+                            <p class="text-secondary small mb-0">Update your background, qualifications, and portfolio documents.</p>
+                        </div>
+                        <a href="{% url 'seeker_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                        </a>
+                    </div>
+
+                    <!-- Profile Form Card -->
+                    <form method="post" enctype="multipart/form-data" class="ww-card p-4 p-md-5 mb-4">
+                        {% csrf_token %}
+
+                        <!-- Section 1: Personal Info -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-person-circle fs-5 text-primary"></i>
+                                <h2 class="h5 fw-bold mb-0">Personal Information</h2>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" name="full_name" value="{{ profile.full_name|default:request.user.get_full_name }}" class="form-control" placeholder="e.g. Alex Smith">
+                                    <div class="form-text">Your name as presented to potential employers.</div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Professional Headline</label>
+                                    <input type="text" name="headline" value="{{ profile.headline }}" class="form-control" placeholder="e.g. Senior Backend Engineer & Cloud Architect">
+                                    <div class="form-text">A one-line summary of your specialty.</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Professional Bio / Summary</label>
+                                    <textarea name="bio" rows="4" class="form-control" placeholder="Summarize your engineering philosophy, notable projects, and leadership experience...">{{ profile.bio }}</textarea>
+                                    <div class="form-text">Brief overview highlighting your strongest achievements.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Contact & Location -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-geo-alt fs-5 text-danger"></i>
+                                <h2 class="h5 fw-bold mb-0">Contact & Location</h2>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" name="phone" value="{{ profile.phone }}" class="form-control" placeholder="e.g. +1 555-019-2834">
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Primary Location</label>
+                                    <input type="text" name="location" value="{{ profile.location }}" class="form-control" placeholder="e.g. San Francisco, CA or Remote">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Education & Competencies -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-mortarboard fs-5 text-warning"></i>
+                                <h2 class="h5 fw-bold mb-0">Education & Technical Skills</h2>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="form-label">Highest Education Attained</label>
+                                    <input type="text" name="education" value="{{ profile.education }}" class="form-control" placeholder="e.g. B.S. in Computer Science — Stanford University">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label">Technical Skills & Competencies</label>
+                                    <textarea name="skills" rows="3" class="form-control" placeholder="e.g. Python, Django, PostgreSQL, Docker, AWS, React, Kubernetes">{{ skills_text }}</textarea>
+                                    <div class="form-text">Separate individual skills with commas. These will be highlighted on your applications.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 4: Media & Documents -->
+                        <div class="mb-5">
+                            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom">
+                                <i class="bi bi-file-earmark-arrow-up fs-5 text-success"></i>
+                                <h2 class="h5 fw-bold mb-0">Photo & Resume Uploads</h2>
+                            </div>
+
+                            <div class="row g-4">
+                                <!-- Profile Photo Upload -->
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                        <label class="form-label">Profile Photo</label>
+                                        <div class="d-flex align-items-center gap-3 mb-2">
+                                            <div class="avatar-circle" style="width: 50px; height: 50px; font-size: 1.15rem;">
+                                                {% if profile.profile_photo %}
+                                                    <img src="{{ profile.profile_photo.url }}" alt="Profile Photo">
+                                                {% else %}
+                                                    {{ profile.initials }}
+                                                {% endif %}
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <input type="file" name="profile_photo" accept=".jpg,.png,.jpeg,.webp" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+                                        <div class="form-text small">Accepted formats: JPG, PNG, WEBP (Max 2MB).</div>
+                                    </div>
+                                </div>
+
+                                <!-- Resume Upload -->
+                                <div class="col-md-6">
+                                    <div class="p-3 border rounded-3 bg-light bg-opacity-50">
+                                        <label class="form-label">Professional Resume</label>
+                                        <input type="file" name="resume" accept=".pdf,.doc,.docx" class="form-control form-control-sm mb-2">
+                                        {% if profile.resume %}
+                                            <div class="d-flex align-items-center gap-2 small text-success">
+                                                <i class="bi bi-file-earmark-check-fill"></i>
+                                                <span>Resume attached:</span>
+                                                <a href="{% url 'download_profile_resume' %}" target="_blank" rel="noopener noreferrer" class="fw-semibold">
+                                                    View Document &nearr;
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            <div class="form-text small text-secondary">
+                                                No resume uploaded yet. Accepted: PDF, DOC, DOCX.
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-end align-items-center gap-2 pt-3 border-top">
+                            <a href="{% url 'seeker_dashboard' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-lg me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

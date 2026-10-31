@@ -1,0 +1,45 @@
+<header class="dashboard-header">
+    <div class="d-flex align-items-center gap-3">
+        <button type="button" class="btn btn-sm btn-light border sidebar-toggle-btn d-lg-none" aria-label="Toggle sidebar">
+            <i class="bi bi-list fs-5"></i>
+        </button>
+        <div class="dashboard-title-area">
+            <h1>{% block header_title %}Dashboard{% endblock %}</h1>
+            <p>{% block header_subtitle %}Welcome back, {{ request.user.username }}! Manage your activities below.{% endblock %}</p>
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        {% block header_actions %}
+            {% if user.profile.role == 'employer' %}
+                <a href="{% url 'create_job' %}" class="btn btn-primary btn-sm d-none d-sm-inline-flex">
+                    <i class="bi bi-plus-lg"></i> Post a Job
+                </a>
+            {% elif user.profile.role == 'seeker' %}
+                <a href="{% url 'job_list' %}" class="btn btn-primary btn-sm d-none d-sm-inline-flex">
+                    <i class="bi bi-search"></i> Find Jobs
+                </a>
+            {% endif %}
+        {% endblock %}
+
+        <div class="d-flex align-items-center gap-2 border-start ps-3 d-none d-md-flex">
+            <div class="avatar-circle" style="width: 36px; height: 36px; font-size: 0.85rem;">
+                {% if user.profile.role == 'seeker' and user.seeker_profile.profile_photo %}
+                    <img src="{{ user.seeker_profile.profile_photo.url }}" alt="{{ user.username }}">
+                {% else %}
+                    {% if user.profile.role == 'seeker' %}
+                        {{ user.seeker_profile.initials }}
+                    {% elif user.profile.role == 'employer' %}
+                        {{ user.employer_profile.initials }}
+                    {% else %}
+                        {{ user.username|slice:":1"|upper }}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="d-none d-xl-block text-start">
+                <div class="fw-semibold text-dark small" style="line-height: 1.2;">{{ user.username }}</div>
+                <div class="text-secondary" style="font-size: 0.7rem;">{{ user.email|default:"Active" }}</div>
+            </div>
+        </div>
+    </div>
+</header>

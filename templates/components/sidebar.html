@@ -1,0 +1,103 @@
+<div class="sidebar-overlay"></div>
+
+<aside class="dashboard-sidebar">
+    <div class="sidebar-header">
+        <a class="ww-brand" href="{% url 'home' %}">
+            <span class="ww-brand-icon">
+                <i class="bi bi-briefcase-fill"></i>
+            </span>
+            <span>Work<span class="ww-brand-accent">Wave</span></span>
+        </a>
+        <button type="button" class="btn btn-sm btn-light sidebar-close-btn d-lg-none" aria-label="Close sidebar">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-profile-card">
+        <div class="avatar-circle">
+            {% if user.profile.role == 'seeker' and user.seeker_profile.profile_photo %}
+                <img src="{{ user.seeker_profile.profile_photo.url }}" alt="{{ user.username }}">
+            {% else %}
+                {% if user.profile.role == 'seeker' %}
+                    {{ user.seeker_profile.initials }}
+                {% elif user.profile.role == 'employer' %}
+                    {{ user.employer_profile.initials }}
+                {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            {% endif %}
+        </div>
+        <div class="sidebar-profile-info">
+            <div class="sidebar-profile-name" title="{{ user.username }}">
+                {% if user.profile.role == 'seeker' and user.seeker_profile.full_name %}
+                    {{ user.seeker_profile.full_name }}
+                {% elif user.profile.role == 'employer' and user.employer_profile.company_name %}
+                    {{ user.employer_profile.company_name }}
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+            </div>
+            <span class="badge {% if user.profile.role == 'employer' %}bg-primary-subtle text-primary{% else %}bg-warning-subtle text-warning-emphasis{% endif %} border rounded-pill px-2 py-0.5 text-uppercase" style="font-size: 0.65rem;">
+                {{ user.profile.get_role_display|default:user.profile.role }}
+            </span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-section-title">Navigation</div>
+
+        {% if user.profile.role == 'seeker' %}
+            <a href="{% url 'seeker_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'seeker_dashboard' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Overview</span>
+            </a>
+            <a href="{% url 'edit_profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'edit_profile' %}active{% endif %}">
+                <i class="bi bi-person-gear"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="{% url 'job_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'job_list' %}active{% endif %}">
+                <i class="bi bi-search"></i>
+                <span>Browse Jobs</span>
+            </a>
+            <a href="{% url 'seeker_dashboard' %}#applications" class="sidebar-link">
+                <i class="bi bi-send-check"></i>
+                <span>My Applications</span>
+            </a>
+        {% elif user.profile.role == 'employer' %}
+            <a href="{% url 'employer_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'employer_dashboard' or request.resolver_match.url_name == 'applicants' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i>
+                <span>Overview</span>
+            </a>
+            <a href="{% url 'create_job' %}" class="sidebar-link {% if request.resolver_match.url_name == 'create_job' %}active{% endif %}">
+                <i class="bi bi-plus-circle"></i>
+                <span>Post a Job</span>
+            </a>
+            <a href="{% url 'employer_dashboard' %}#jobs" class="sidebar-link">
+                <i class="bi bi-briefcase"></i>
+                <span>My Job Postings</span>
+            </a>
+            <a href="{% url 'job_list' %}" class="sidebar-link">
+                <i class="bi bi-globe"></i>
+                <span>View Public Board</span>
+            </a>
+        {% endif %}
+
+        {% if user.is_staff or user.is_superuser %}
+            <div class="sidebar-section-title mt-3">Administration</div>
+            <a href="{% if user.is_superuser %}{% url 'admin_dashboard' %}{% else %}/admin/{% endif %}" class="sidebar-link">
+                <i class="bi bi-shield-lock"></i>
+                <span>Admin Panel</span>
+            </a>
+        {% endif %}
+    </nav>
+
+    <div class="sidebar-footer">
+        <form method="post" action="{% url 'logout' %}" data-csrf-token-url="{% url 'csrf_token' %}" class="w-100">
+            {% csrf_token %}
+            <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2" type="submit">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Sign Out</span>
+            </button>
+        </form>
+    </div>
+</aside>

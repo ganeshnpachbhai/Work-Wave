@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Employer Dashboard — WorkWave{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content Area -->
+    <div class="dashboard-main">
+        {% include "components/dashboard_header.html" %}
+
+        <div class="dashboard-body">
+            {% include "components/messages.html" %}
+
+            <!-- Header Action Row -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <div>
+                    <h1 class="h3 fw-bold mb-1">
+                        {{ employer.company_name }}
+                    </h1>
+                    <p class="text-secondary small mb-0">
+                        Employer workspace &bull; Manage published listings and track inbound candidate pipelines.
+                    </p>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'create_job' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg"></i> Post a Job
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ job_count }}</div>
+                            <div class="stat-label">Total Jobs Listed</div>
+                        </div>
+                        <div class="stat-icon stat-icon-primary">
+                            <i class="bi bi-briefcase-fill"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ employer.active_jobs_count }}</div>
+                            <div class="stat-label">Active Openings</div>
+                        </div>
+                        <div class="stat-icon stat-icon-success">
+                            <i class="bi bi-broadcast"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ employer.closed_jobs_count }}</div>
+                            <div class="stat-label">Closed / Filled</div>
+                        </div>
+                        <div class="stat-icon stat-icon-info">
+                            <i class="bi bi-archive-fill"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ employer.total_applications_count }}</div>
+                            <div class="stat-label">Total Applicants Received</div>
+                        </div>
+                        <div class="stat-icon stat-icon-accent">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Management Table Card -->
+            <div class="ww-table-card" id="jobs">
+                <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <h2 class="h5 fw-bold mb-0">Published Job Postings</h2>
+                        <span class="text-secondary small">Review applicants, adjust listings, or deactivate closed roles</span>
+                    </div>
+
+                    <a href="{% url 'create_job' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> New Opening
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table ww-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Role & Location</th>
+                                <th>Employment Type</th>
+                                <th>Applications</th>
+                                <th>Status</th>
+                                <th>Posted Date</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'job_detail' job.id %}" class="fw-semibold text-dark text-decoration-none">
+                                            {{ job.title }}
+                                        </a>
+                                        <div class="text-secondary small">
+                                            <i class="bi bi-geo-alt me-1 text-danger"></i> {{ job.location }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="ww-badge badge-job-type">
+                                            {{ job.get_job_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'applicants' job.id %}" class="badge text-bg-light border text-dark fw-bold px-2.5 py-1.5 text-decoration-none" title="View all applicants">
+                                            <i class="bi bi-people-fill text-primary me-1"></i> {{ job.applications.count }} Candidate{{ job.applications.count|pluralize }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {% if job.is_active %}
+                                            <span class="badge badge-active rounded-pill px-2.5 py-1">
+                                                <i class="bi bi-dot"></i> Active
+                                            </span>
+                                        {% else %}
+                                            <span class="badge badge-closed rounded-pill px-2.5 py-1">
+                                                <i class="bi bi-dot"></i> Closed
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="text-secondary small">
+                                            {{ job.posted_at|date:"d M Y" }}
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="d-inline-flex gap-1.5 flex-wrap justify-content-end">
+                                            <a href="{% url 'applicants' job.id %}" class="btn btn-outline-navy btn-sm" title="View applicants for this role">
+                                                <i class="bi bi-people"></i> Applicants ({{ job.applications.count }})
+                                            </a>
+                                            <a href="{% url 'edit_job' job.id %}" class="btn btn-outline-secondary btn-sm" title="Edit listing">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            {% if job.is_active %}
+                                                <form action="{% url 'close_job' job.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to close this job posting? Candidates will no longer be able to apply.');">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Close job">
+                                                        <i class="bi bi-slash-circle"></i> Close
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="py-5 text-center">
+                                        <div class="ww-empty-icon mb-2">
+                                            <i class="bi bi-briefcase"></i>
+                                        </div>
+                                        <h3 class="h6 fw-bold mb-1">You haven't posted any jobs yet</h3>
+                                        <p class="text-secondary small max-w-sm mx-auto mb-3">
+                                            Create and publish your first opening to begin receiving verified candidate submissions.
+                                        </p>
+                                        <a href="{% url 'create_job' %}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-plus-lg"></i> Post Your First Opening
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

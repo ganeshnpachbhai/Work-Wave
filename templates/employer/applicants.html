@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Applicants for {{ job.title }} — WorkWave{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content Area -->
+    <div class="dashboard-main">
+        {% include "components/dashboard_header.html" %}
+
+        <div class="dashboard-body">
+            {% include "components/messages.html" %}
+
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb small">
+                    <li class="breadcrumb-item"><a href="{% url 'employer_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'employer_dashboard' %}#jobs">My Jobs</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ job.title }} Applicants</li>
+                </ol>
+            </nav>
+
+            <!-- Page Title Bar -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 pb-2 border-bottom">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge text-bg-primary-subtle text-primary border border-primary-subtle fw-semibold rounded-pill px-2.5 py-1">Candidate Pipeline</span>
+                        <span class="ww-badge badge-job-type">{{ job.get_job_type_display }}</span>
+                    </div>
+                    <h1 class="h3 fw-bold mb-1">
+                        Applicants for {{ job.title }}
+                    </h1>
+                    <p class="text-secondary small mb-0">
+                        <i class="bi bi-geo-alt me-1 text-danger"></i> {{ job.location }} &bull;
+                        {{ applications.count }} Candidate{{ applications.count|pluralize }} applied
+                    </p>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'job_detail' job.id %}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> View Public Listing
+                    </a>
+                    <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-navy btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Applicants Table Card -->
+            <div class="ww-table-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="h5 fw-bold mb-0">Candidate Submissions</h2>
+                        <span class="text-secondary small">Review credentials and update recruitment pipeline statuses</span>
+                    </div>
+                    <span class="badge text-bg-light border text-secondary px-3 py-1.5">
+                        {{ applications.count }} Total
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table ww-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Qualifications & Skills</th>
+                                <th>Applied Date</th>
+                                <th>Resume / CV</th>
+                                <th>Hiring Status</th>
+                                <th class="text-end">Update Pipeline</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2.5">
+                                            <div class="avatar-circle" style="width: 38px; height: 38px; font-size: 0.9rem;">
+                                                {% if application.seeker.profile_photo %}
+                                                    <img src="{{ application.seeker.profile_photo.url }}" alt="{{ application.seeker.user.username }}">
+                                                {% else %}
+                                                    {{ application.seeker.initials|default:"CD" }}
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <div class="fw-semibold text-dark">
+                                                    {{ application.seeker.full_name|default:application.seeker.user.username }}
+                                                </div>
+                                                <div class="text-secondary small">
+                                                    <i class="bi bi-envelope me-1"></i> {{ application.seeker.user.email|default:"No email provided" }}
+                                                </div>
+                                                {% if application.seeker.phone %}
+                                                    <div class="text-secondary" style="font-size: 0.75rem;">
+                                                        <i class="bi bi-telephone me-1"></i> {{ application.seeker.phone }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td style="max-width: 260px;">
+                                        <div class="text-dark small fw-medium mb-1">
+                                            <i class="bi bi-mortarboard me-1 text-muted"></i> {{ application.seeker.education|default:"Education not specified" }}
+                                        </div>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            {% for skill in application.seeker.skills.all %}
+                                                <span class="badge text-bg-light border text-secondary" style="font-size: 0.7rem;">
+                                                    {{ skill.name }}
+                                                </span>
+                                            {% empty %}
+                                                <span class="text-secondary" style="font-size: 0.75rem;">No skills listed</span>
+                                            {% endfor %}
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span class="text-secondary small">
+                                            {{ application.applied_at|date:"d M Y" }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {% if application.resume %}
+                                            <a href="{% url 'download_application_resume' application.id %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy btn-sm py-1 px-2.5">
+                                                <i class="bi bi-file-earmark-pdf me-1 text-danger"></i> View Resume &nearr;
+                                            </a>
+                                        {% elif application.seeker.resume %}
+                                            <a href="{% url 'download_application_resume' application.id %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-sm py-1 px-2.5">
+                                                <i class="bi bi-file-earmark-text me-1 text-primary"></i> Profile CV &nearr;
+                                            </a>
+                                        {% else %}
+                                            <span class="text-secondary small fst-italic">No resume attached</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if application.status == 'pending' %}
+                                            <span class="ww-badge badge-status-pending">
+                                                <i class="bi bi-hourglass-split"></i> Pending
+                                            </span>
+                                        {% elif application.status == 'shortlisted' %}
+                                            <span class="ww-badge badge-status-shortlisted">
+                                                <i class="bi bi-star-fill"></i> Shortlisted
+                                            </span>
+                                        {% elif application.status == 'accepted' %}
+                                            <span class="ww-badge badge-status-accepted">
+                                                <i class="bi bi-check-circle-fill"></i> Accepted
+                                            </span>
+                                        {% elif application.status == 'rejected' %}
+                                            <span class="ww-badge badge-status-rejected">
+                                                <i class="bi bi-x-circle-fill"></i> Rejected
+                                            </span>
+                                        {% else %}
+                                            <span class="badge text-bg-secondary">{{ application.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="text-end">
+                                        <form action="{% url 'update_application_status' application.id %}" method="post" class="d-inline-flex gap-1.5 align-items-center justify-content-end">
+                                            {% csrf_token %}
+                                            <select name="status" class="form-select form-select-sm" style="width: auto; font-size: 0.8rem;" aria-label="Update candidate status">
+                                                {% for value, label in status_choices %}
+                                                    <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>
+                                                        {{ label }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-primary btn-sm px-2.5 py-1" title="Save status">
+                                                Save
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="py-5 text-center">
+                                        <div class="ww-empty-icon mb-2">
+                                            <i class="bi bi-inbox"></i>
+                                        </div>
+                                        <h3 class="h6 fw-bold mb-1">No applications received yet</h3>
+                                        <p class="text-secondary small max-w-sm mx-auto mb-3">
+                                            Candidates will appear here as soon as they submit applications for this role.
+                                        </p>
+                                        <a href="{% url 'employer_dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-arrow-left me-1"></i> Return to Dashboard
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

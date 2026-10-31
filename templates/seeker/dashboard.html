@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Seeker Dashboard — WorkWave{% endblock %}
+
+{% block extra_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    {% include "components/sidebar.html" %}
+
+    <!-- Main Content Area -->
+    <div class="dashboard-main">
+        {% include "components/dashboard_header.html" %}
+
+        <div class="dashboard-body">
+            {% include "components/messages.html" %}
+
+            <!-- Welcome Greeting Banner -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <div>
+                    <h1 class="h3 fw-bold mb-1">
+                        Welcome, {{ request.user.username }}!
+                    </h1>
+                    <p class="text-secondary small mb-0">
+                        Track your job search progress, active applications, and interview invitations.
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-person-gear"></i> Edit Profile
+                    </a>
+                    <a href="{% url 'job_list' %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-search"></i> Browse Jobs
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Grid -->
+            <div class="row g-3 mb-4">
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ applications.count }}</div>
+                            <div class="stat-label">Total Applications</div>
+                        </div>
+                        <div class="stat-icon stat-icon-primary">
+                            <i class="bi bi-send-check-fill"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ profile.pending_applications_count }}</div>
+                            <div class="stat-label">In Review / Pending</div>
+                        </div>
+                        <div class="stat-icon stat-icon-warning">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ profile.shortlisted_applications_count }}</div>
+                            <div class="stat-label">Shortlisted</div>
+                        </div>
+                        <div class="stat-icon stat-icon-info">
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-sm-6">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-value">{{ profile.accepted_applications_count }}</div>
+                            <div class="stat-label">Offers / Accepted</div>
+                        </div>
+                        <div class="stat-icon stat-icon-success">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-column Section: Applications Table & Profile Readiness -->
+            <div class="row g-4 mb-4">
+                <!-- Left: Applications Table -->
+                <div class="col-xl-8 col-lg-7">
+                    <div class="ww-table-card" id="applications">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="h5 fw-bold mb-0">My Applications</h2>
+                                <span class="text-secondary small">Real-time status tracking for applied positions</span>
+                            </div>
+                            <span class="badge text-bg-light border px-2.5 py-1 text-secondary">
+                                {{ applications.count }} Total
+                            </span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table ww-table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Target Role</th>
+                                        <th>Company</th>
+                                        <th>Applied Date</th>
+                                        <th>Current Status</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for application in applications %}
+                                        <tr>
+                                            <td>
+                                                <a href="{% url 'job_detail' application.job.id %}" class="fw-semibold text-dark text-decoration-none">
+                                                    {{ application.job.title }}
+                                                </a>
+                                                <div class="text-secondary small">
+                                                    {{ application.job.get_job_type_display }} &bull; {{ application.job.location }}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span class="fw-medium text-secondary">
+                                                    {{ application.job.employer.company_name }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="text-secondary small">
+                                                    {{ application.applied_at|date:"d M Y" }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {% if application.status == 'pending' %}
+                                                    <span class="ww-badge badge-status-pending">
+                                                        <i class="bi bi-clock-history"></i> Pending Review
+                                                    </span>
+                                                {% elif application.status == 'shortlisted' %}
+                                                    <span class="ww-badge badge-status-shortlisted">
+                                                        <i class="bi bi-star"></i> Shortlisted
+                                                    </span>
+                                                {% elif application.status == 'accepted' %}
+                                                    <span class="ww-badge badge-status-accepted">
+                                                        <i class="bi bi-check-circle"></i> Accepted
+                                                    </span>
+                                                {% elif application.status == 'rejected' %}
+                                                    <span class="ww-badge badge-status-rejected">
+                                                        <i class="bi bi-x-circle"></i> Rejected
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge text-bg-secondary">{{ application.get_status_display }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end">
+                                                <a href="{% url 'job_detail' application.job.id %}" class="btn btn-outline-secondary btn-sm" title="View Job Details">
+                                                    View Role
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="py-5 text-center">
+                                                <div class="ww-empty-icon mb-2">
+                                                    <i class="bi bi-inbox"></i>
+                                                </div>
+                                                <h3 class="h6 fw-bold mb-1">No applications submitted yet</h3>
+                                                <p class="text-secondary small max-w-sm mx-auto mb-3">
+                                                    Explore open positions matching your background and submit your credentials.
+                                                </p>
+                                                <a href="{% url 'job_list' %}" class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-search"></i> Browse Opportunities
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Profile Completion & Quick Stats -->
+                <div class="col-xl-4 col-lg-5">
+                    <!-- Profile Completion Card -->
+                    <div class="completion-card mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="small text-uppercase tracking-wider fw-bold text-white-50">Profile Strength</span>
+                            <span class="badge bg-white bg-opacity-20 text-white font-heading fw-bold px-2 py-1">
+                                {{ profile.profile_completion_percentage }}% Complete
+                            </span>
+                        </div>
+
+                        <div class="progress mb-3" role="progressbar" aria-valuenow="{{ profile.profile_completion_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: {{ profile.profile_completion_percentage }}%"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="completion-item {% if profile.phone or profile.location %}completed{% else %}pending{% endif %}">
+                                <i class="bi {% if profile.phone or profile.location %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
+                                <span>Contact Details (Phone & Location)</span>
+                            </div>
+                            <div class="completion-item {% if profile.education %}completed{% else %}pending{% endif %}">
+                                <i class="bi {% if profile.education %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
+                                <span>Education Credentials</span>
+                            </div>
+                            <div class="completion-item {% if profile.skills.exists %}completed{% else %}pending{% endif %}">
+                                <i class="bi {% if profile.skills.exists %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
+                                <span>Technical Competencies & Skills</span>
+                            </div>
+                            <div class="completion-item {% if profile.resume %}completed{% else %}pending{% endif %}">
+                                <i class="bi {% if profile.resume %}bi-check-circle-fill{% else %}bi-circle{% endif %}"></i>
+                                <span>Professional Resume Upload</span>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'edit_profile' %}" class="btn btn-sm btn-light w-100 fw-bold text-dark">
+                            <i class="bi bi-pencil-square me-1"></i> Update Profile Details
+                        </a>
+                    </div>
+
+                    <!-- Skills Widget -->
+                    <div class="ww-card p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h6 fw-bold mb-0 text-uppercase text-muted" style="letter-spacing: 0.05em;">Technical Skills</h3>
+                            <a href="{% url 'edit_profile' %}" class="small text-primary fw-semibold">Edit</a>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-1.5">
+                            {% for skill in profile.skills.all %}
+                                <span class="badge text-bg-light border text-dark fw-medium px-2.5 py-1.5">
+                                    {{ skill.name }}
+                                </span>
+                            {% empty %}
+                                <div class="text-secondary small py-2">
+                                    No skills added to your profile. <a href="{% url 'edit_profile' %}">Add skills</a> to improve job match accuracy.
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

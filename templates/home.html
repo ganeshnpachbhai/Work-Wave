@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}WorkWave — Discover Work That Moves You Forward{% endblock %}
+
+{% block content %}
+<main class="container my-4 my-md-5">
+    <!-- Hero Section -->
+    <section class="ww-hero">
+        <div class="row align-items-center position-relative" style="z-index: 2;">
+            <div class="col-xl-9 col-lg-10">
+                <div class="ww-hero-pill">
+                    <i class="bi bi-stars text-warning"></i>
+                    <span>Your Next Chapter Starts Here</span>
+                </div>
+
+                <h1 class="ww-hero-title">
+                    Discover Work That Moves You Forward.
+                </h1>
+
+                <p class="ww-hero-subtitle">
+                    Explore exciting career opportunities, connect with leading employers, and take the next step toward your professional future.
+                </p>
+
+                <!-- Search Panel -->
+                <form action="{% url 'job_list' %}" method="get" class="ww-search-box">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-4">
+                            <div class="ww-search-input-group">
+                                <i class="bi bi-search"></i>
+                                <input type="text" name="q" placeholder="Job title or keyword..." class="ww-search-input" aria-label="Job title or keyword">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="ww-search-input-group">
+                                <i class="bi bi-geo-alt"></i>
+                                <input type="text" name="location" placeholder="City or Remote..." class="ww-search-input" aria-label="Location">
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="ww-search-input-group">
+                                <i class="bi bi-briefcase"></i>
+                                <select name="job_type" class="ww-search-input text-secondary" aria-label="Job type">
+                                    <option value="">All Job Types</option>
+                                    <option value="full_time">Full Time</option>
+                                    <option value="part_time">Part Time</option>
+                                    <option value="contract">Contract</option>
+                                    <option value="remote">Remote</option>
+                                    <option value="internship">Internship</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100 py-2.5">
+                                <i class="bi bi-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Popular Tags -->
+                <div class="d-flex align-items-center flex-wrap gap-2 mt-3 pt-1 text-white-50 small">
+                    <span class="text-white fw-semibold me-1">Popular searches:</span>
+                    <a href="{% url 'job_list' %}?q=Python" class="badge rounded-pill bg-white bg-opacity-10 text-white text-decoration-none px-2.5 py-1.5 border border-white border-opacity-10">Python</a>
+                    <a href="{% url 'job_list' %}?q=Frontend" class="badge rounded-pill bg-white bg-opacity-10 text-white text-decoration-none px-2.5 py-1.5 border border-white border-opacity-10">Frontend</a>
+                    <a href="{% url 'job_list' %}?job_type=remote" class="badge rounded-pill bg-white bg-opacity-10 text-white text-decoration-none px-2.5 py-1.5 border border-white border-opacity-10">Remote Only</a>
+                    <a href="{% url 'job_list' %}?q=Designer" class="badge rounded-pill bg-white bg-opacity-10 text-white text-decoration-none px-2.5 py-1.5 border border-white border-opacity-10">Product Designer</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Job Categories -->
+    <section class="mb-5 pb-2">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge text-bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-2.5 py-1.5 rounded-pill mb-2">Explore Domains</span>
+                <h2 class="h3 fw-bold mb-1">Popular Job Categories</h2>
+                <p class="text-secondary small mb-0">Browse through the highest volume tech and commercial disciplines.</p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Software" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-code-slash"></i>
+                    </div>
+                    <div class="category-title">Software Development</div>
+                    <div class="category-subtitle">Backend, Fullstack & Mobile</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Design" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-palette"></i>
+                    </div>
+                    <div class="category-title">UI/UX Design</div>
+                    <div class="category-subtitle">Product Design & Research</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Marketing" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-megaphone"></i>
+                    </div>
+                    <div class="category-title">Marketing</div>
+                    <div class="category-subtitle">Growth, Content & Brand</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Data" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
+                    <div class="category-title">Data Analytics</div>
+                    <div class="category-subtitle">Data Science & Engineering</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Finance" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-cash-stack"></i>
+                    </div>
+                    <div class="category-title">Finance & Accounting</div>
+                    <div class="category-subtitle">FP&A, Strategy & Audit</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=HR" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="category-title">Human Resources</div>
+                    <div class="category-subtitle">Recruiting, Talent & People Ops</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Sales" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-bullseye"></i>
+                    </div>
+                    <div class="category-title">Sales & Business Dev</div>
+                    <div class="category-subtitle">Enterprise, SDR & Account Exec</div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                <a href="{% url 'job_list' %}?q=Support" class="category-card">
+                    <div class="category-icon-wrap">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <div class="category-title">Customer Support</div>
+                    <div class="category-subtitle">Client Success & Technical Ops</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Jobs Section -->
+    <section class="mb-5 pb-2">
+        <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-2">
+            <div>
+                <span class="badge text-bg-warning-subtle text-warning-emphasis border border-warning-subtle fw-semibold px-2.5 py-1.5 rounded-pill mb-2">Verified Openings</span>
+                <h2 class="h3 fw-bold mb-1">Latest Opportunities</h2>
+                <p class="text-secondary small mb-0">Explore recently posted roles from verified employers.</p>
+            </div>
+            <a href="{% url 'job_list' %}" class="btn btn-outline-navy btn-sm">
+                View All Jobs <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-3">
+            {% for job in jobs %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="job-card">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                            <div class="job-company-avatar">
+                                {{ job.employer.initials|default:"WW" }}
+                            </div>
+                            <span class="ww-badge badge-job-type">
+                                <i class="bi bi-dot fs-6"></i> {{ job.get_job_type_display }}
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <h3 class="job-card-title">
+                                <a href="{% url 'job_detail' job.id %}" class="text-reset">{{ job.title }}</a>
+                            </h3>
+                            <div class="job-company-name">
+                                <i class="bi bi-building me-1"></i> {{ job.employer.company_name }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="job-meta-pill">
+                                <i class="bi bi-geo-alt"></i> {{ job.location }}
+                            </span>
+                            <span class="job-meta-pill">
+                                <i class="bi bi-clock"></i> {{ job.posted_at|timesince }} ago
+                            </span>
+                        </div>
+
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            <div>
+                                {% if job.salary_min or job.salary_max %}
+                                    <div class="job-salary">
+                                        {% if job.salary_min %}₹{{ job.salary_min|floatformat:0 }}{% endif %}
+                                        {% if job.salary_min and job.salary_max %} - {% endif %}
+                                        {% if job.salary_max %}₹{{ job.salary_max|floatformat:0 }}{% endif %}
+                                    </div>
+                                    <span class="text-secondary" style="font-size: 0.725rem;">Annual Est.</span>
+                                {% else %}
+                                    <span class="text-secondary small">Salary Disclosed on Request</span>
+                                {% endif %}
+                            </div>
+
+                            <a href="{% url 'job_detail' job.id %}" class="btn btn-outline-secondary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="ww-empty-state">
+                        <div class="ww-empty-icon">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-2">No Job Openings Currently Available</h3>
+                        <p class="text-secondary small max-w-md mx-auto mb-3">
+                            Employers are constantly posting new positions. Check back soon or register as an employer to list your vacancy.
+                        </p>
+                        {% if user.is_authenticated and user.profile.role == 'employer' %}
+                            <a href="{% url 'create_job' %}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus-lg"></i> Post a Job Now
+                            </a>
+                        {% else %}
+                            <a href="{% url 'signup' %}" class="btn btn-primary btn-sm">
+                                Join as an Employer
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Why Choose WorkWave Section -->
+    <section class="mb-5 pb-3">
+        <div class="text-center max-w-xl mx-auto mb-4 pb-2">
+            <span class="badge text-bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-2.5 py-1.5 rounded-pill mb-2">Platform Highlights</span>
+            <h2 class="h3 fw-bold mb-2">Why Top Professionals Choose WorkWave</h2>
+            <p class="text-secondary small">Built from the ground up to eliminate friction in modern hiring and career advancement.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <i class="bi bi-compass"></i>
+                    </div>
+                    <h3 class="feature-title">Discover Opportunities</h3>
+                    <p class="feature-desc">Access high-quality job postings verified by recruitment teams with transparent compensation and requirements.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h3 class="feature-title">Connect with Employers</h3>
+                    <p class="feature-desc">Direct line of sight into company leadership, engineering leads, and recruitment decision-makers.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <h3 class="feature-title">Track Applications</h3>
+                    <p class="feature-desc">Get instant transparency with dynamic status milestones: Pending, Shortlisted, Accepted, or Closed.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h3 class="feature-title">Build Your Career</h3>
+                    <p class="feature-desc">Present your professional credentials, portfolio, technical skills, and resume with a modern profile layout.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Employer CTA Section -->
+    <section class="mb-5">
+        <div class="ww-cta-card">
+            <div class="row align-items-center position-relative" style="z-index: 2;">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <span class="badge bg-white bg-opacity-20 text-white border border-white border-opacity-25 rounded-pill px-3 py-1.5 small mb-3">
+                        <i class="bi bi-building me-1"></i> For Hiring Teams
+                    </span>
+                    <h2 class="display-6 fw-bold text-white mb-2">
+                        Find the Right Talent for Your Team.
+                    </h2>
+                    <p class="text-white-50 lead mb-0" style="font-size: 1.05rem;">
+                        Connect with skilled professionals and discover candidates who can help your business scale efficiently.
+                    </p>
+                </div>
+
+                <div class="col-lg-4 text-lg-end">
+                    {% if user.is_authenticated %}
+                        {% if user.profile.role == 'employer' %}
+                            <a href="{% url 'create_job' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-plus-circle me-1"></i> Post a Job Now
+                            </a>
+                        {% else %}
+                            <a href="{% url 'job_list' %}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-search me-1"></i> Browse Open Roles
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-rocket-takeoff me-1"></i> Post a Job
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
